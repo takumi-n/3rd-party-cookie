@@ -63,9 +63,6 @@ func ad(w http.ResponseWriter, r *http.Request) {
 		adContent += fmt.Sprintf("<div>%s を閲覧したことがある</div>", site)
 	}
 
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	w.Header().Set("Access-Control-Allow-Origin", "https://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Write([]byte(fmt.Sprintf(`
 const ad = document.getElementById('ad');
 ad.style.display = 'flex';
