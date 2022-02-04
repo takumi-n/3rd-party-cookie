@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var trackingData = map[string][]string{}
+var trackingData = map[string]map[string]bool{}
 
 func main() {
 	r := mux.NewRouter()
@@ -25,14 +25,9 @@ func main() {
 }
 
 func ad(w http.ResponseWriter, r *http.Request) {
-	c, err := r.Cookie("identifier")
-
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	w.Header().Set("Access-Control-Allow-Origin", "https://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	identifier := ""
 
+	c, err := r.Cookie("identifier")
 	if err != nil {
 		identifier = makeRandomStr(10)
 		cookie := &http.Cookie{
@@ -50,7 +45,7 @@ func ad(w http.ResponseWriter, r *http.Request) {
 
 	_, ok := trackingData[identifier]
 	if !ok {
-		trackingData[identifier] = []string{}
+		trackingData[identifier] = map[string]bool{}
 	}
 
 	u, err := url.Parse(r.Referer())
@@ -59,15 +54,18 @@ func ad(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trackingData[identifier] = append(trackingData[identifier], u.Hostname())
+	trackingData[identifier][u.Hostname()] = true
 
 	data := trackingData[identifier]
 	adContent := ""
 
-	for _, v := range data {
-		adContent += fmt.Sprintf("<div>%s を閲覧したことがある</div>", v)
+	for site := range data {
+		adContent += fmt.Sprintf("<div>%s を閲覧したことがある</div>", site)
 	}
 
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "https://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Write([]byte(fmt.Sprintf(`
 const ad = document.getElementById('ad');
 ad.style.display = 'flex';
