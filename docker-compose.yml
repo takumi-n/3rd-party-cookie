@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  tracker:
+    container_name: tracker
+    build:
+      context: tracker
+    ports:
+      - 9090:9090
+
+  client1:
+    container_name: client1
+    image: nginx:latest
+    ports:
+      - 9091:443
+    volumes:
+      - ./client1:/usr/share/nginx/html
+      - ./client1/ssl.conf:/etc/nginx/conf.d/ssl.conf
+      - ./client1/ssl:/etc/nginx/ssl
+
+  client2:
+    container_name: client2
+    image: nginx:latest
+    ports:
+      - 9092:443
+    volumes:
+      - ./client2:/usr/share/nginx/html
+      - ./client2/ssl.conf:/etc/nginx/conf.d/ssl.conf
+      - ./client2/ssl:/etc/nginx/ssl

@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "client1",
+			"path": "client1"
+		},
+		{
+			"name": "client2",
+			"path": "client2"
+		},
+		{
+			"name": "tracker",
+			"path": "tracker"
+		}
+	],
+	"settings": {}
+}

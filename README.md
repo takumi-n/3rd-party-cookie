@@ -4,11 +4,25 @@
 
 ## 準備
 
-- `tracker` が 127.0.0.1 に向くように hosts をいじる
-- mkcert 等を利用して `localhost` の証明書ペア `client/localhost-key.pem` （秘密鍵）、 `client/localhost.pem` （証明書） と `tracker` の証明書ペア `tracker/tracker-key.pem` （秘密鍵）、 `tracker/tracker.pem` （証明書）を用意する
+- ホスト名 `client1` `client2` `tracker` が 127.0.0.1 に向くように hosts をいじる
+- mkcert 等を利用して以下の鍵を作成する
+
+| 配置                          | 説明             |
+| ----------------------------- | ---------------- |
+| `client1/ssl/client1.pem`     | client1 の証明書 |
+| `client1/ssl/client1-key.pem` | client1 の秘密鍵 |
+| `client2/ssl/client2.pem`     | client2 の証明書 |
+| `client2/ssl/client2-key.pem` | client2 の秘密鍵 |
+| `tracker/ssl/tracker.pem`     | tracker の証明書 |
+| `client1/ssl/tracker-key.pem` | tracker の秘密鍵 |
 
 ## 検証
 
-1. `make serve-client` `make serve-tracker` を叩き、クライアント localhost:8080 とトラッカー tracker:9090 を起動する
-2. https://localhost:8080 へアクセスしてみる。 tracker の 3rd party Cookie `identifier` が作成されることが確認できる
-3. https://tracker:9090/me へアクセスしてみる。収集されたデータを確認できる
+1. `make build` を実行し Docker イメージをビルド
+2. `make up` を実行し環境を立ち上げる
+3. https://client1:9091/ にアクセスする。 **client1** にアクセスしたことが記録されている
+   ![](./docs/1.png)
+4. https://client2:9092/ にアクセスする。 **client1** にアクセスしたことが **client2** に表示される広告サーバーに記録されていることがわかる
+   ![](./docs/2.png)
+5. 再び https://client1:9091/ にアクセスする。手順 3 のときと比べて **client2** にアクセスしたことが **client1** に表示される広告サーバーに追加で記録されていることがわかる
+   ![](./docs/3.png)

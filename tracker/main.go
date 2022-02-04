@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/gorilla/mux"
 )
@@ -13,17 +14,17 @@ var trackingData = map[string]map[string]string{}
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/track", track)
+	r.HandleFunc("/ad", ad)
 	r.HandleFunc("/me", me)
 
 	http.Handle("/", r)
-	err := http.ListenAndServeTLS(":9090", "./tracker.pem", "./tracker-key.pem", nil)
+	err := http.ListenAndServeTLS(":9090", "./ssl/tracker.pem", "./ssl/tracker-key.pem", nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
 }
 
-func track(w http.ResponseWriter, r *http.Request) {
+func ad(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("identifier")
 
 	w.Header().Set("Access-Control-Allow-Headers", "*")
@@ -43,10 +44,8 @@ func track(w http.ResponseWriter, r *http.Request) {
 			SameSite: http.SameSiteNoneMode,
 		}
 		http.SetCookie(w, cookie)
-		w.Write([]byte(fmt.Sprintf("You are a new user: %v", identifier)))
 	} else {
 		identifier = c.Value
-		w.Write([]byte(fmt.Sprintf("You are an existing user: %v", identifier)))
 	}
 
 	_, ok := trackingData[identifier]
@@ -54,11 +53,32 @@ func track(w http.ResponseWriter, r *http.Request) {
 		trackingData[identifier] = map[string]string{}
 	}
 
-	params := r.URL.Query()
-	for k, v := range params {
-		first := v[0]
-		trackingData[identifier][k] = first
+	u, err := url.Parse(r.Referer())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
+
+	trackingData[identifier][u.Hostname()] = "を閲覧したことがある"
+
+	data := trackingData[identifier]
+	adContent := ""
+
+	for k, v := range data {
+		adContent += fmt.Sprintf("<div>%s %s</div>", k, v)
+	}
+
+	w.Write([]byte(fmt.Sprintf(`
+const ad = document.getElementById('ad');
+ad.style.display = 'flex';
+ad.style.flexDirection = 'column';
+ad.style.alignItems = 'center';
+ad.style.justifyContent = 'center';
+ad.style.width = 300;
+ad.style.height = 250;
+ad.style.border = 'red solid 1px';
+ad.innerHTML = '%s';
+	`, adContent)))
 }
 
 func me(w http.ResponseWriter, r *http.Request) {
