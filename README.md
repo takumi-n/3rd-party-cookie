@@ -21,8 +21,8 @@
 1. `make build` を実行し Docker イメージをビルド
 2. `make up` を実行し環境を立ち上げる
 3. https://client1:9091/ にアクセスする。 **client1** にアクセスしたことが記録されている
-   ![](./docs/1.png)
+   <img src="./docs/1.png" width=300>
 4. https://client2:9092/ にアクセスする。 **client1** にアクセスしたことが **client2** に表示される広告サーバーに記録されていることがわかる
-   ![](./docs/2.png)
+   <img src="./docs/2.png" width=300>
 5. 再び https://client1:9091/ にアクセスする。手順 3 のときと比べて **client2** にアクセスしたことが **client1** に表示される広告サーバーに追加で記録されていることがわかる
-   ![](./docs/3.png)
+   <img src="./docs/3.png" width=300>
