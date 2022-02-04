@@ -3,10 +3,12 @@ version: '3'
 services:
   tracker:
     container_name: tracker
-    build:
-      context: tracker
+    image: cosmtrek/air
+    working_dir: /app
     ports:
       - 9090:9090
+    volumes:
+      - ./tracker:/app
 
   client1:
     container_name: client1

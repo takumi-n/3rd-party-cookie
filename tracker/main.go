@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var trackingData = map[string]map[string]string{}
+var trackingData = map[string][]string{}
 
 func main() {
 	r := mux.NewRouter()
@@ -50,7 +50,7 @@ func ad(w http.ResponseWriter, r *http.Request) {
 
 	_, ok := trackingData[identifier]
 	if !ok {
-		trackingData[identifier] = map[string]string{}
+		trackingData[identifier] = []string{}
 	}
 
 	u, err := url.Parse(r.Referer())
@@ -59,13 +59,13 @@ func ad(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trackingData[identifier][u.Hostname()] = "を閲覧したことがある"
+	trackingData[identifier] = append(trackingData[identifier], u.Hostname())
 
 	data := trackingData[identifier]
 	adContent := ""
 
-	for k, v := range data {
-		adContent += fmt.Sprintf("<div>%s %s</div>", k, v)
+	for _, v := range data {
+		adContent += fmt.Sprintf("<div>%s を閲覧したことがある</div>", v)
 	}
 
 	w.Write([]byte(fmt.Sprintf(`
@@ -85,7 +85,7 @@ func me(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("identifier")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("We've not tracked you"))
+		w.Write([]byte("No tracking data"))
 		return
 	}
 
