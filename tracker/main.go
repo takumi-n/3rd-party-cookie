@@ -66,6 +66,8 @@ func ad(w http.ResponseWriter, r *http.Request) {
 		adContent += fmt.Sprintf("<div>%s を閲覧したことがある</div>", site)
 	}
 
+	w.Header().Add("Content-Type", "text/javascript")
+
 	tmpl := template.Must(template.ParseFiles("./ad.tmpl.js"))
 	if err := tmpl.Execute(w, adContent); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
