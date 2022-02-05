@@ -1,0 +1,9 @@
+const ad = document.getElementById('ad');
+ad.style.display = 'flex';
+ad.style.flexDirection = 'column';
+ad.style.alignItems = 'center';
+ad.style.justifyContent = 'center';
+ad.style.width = 300;
+ad.style.height = 250;
+ad.style.border = 'red solid 1px';
+ad.innerHTML = '{{ . }}';

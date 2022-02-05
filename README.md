@@ -18,17 +18,16 @@
 
 ## 検証
 
-1. `make build` を実行し Docker イメージをビルド
-2. `make up` を実行し環境を立ち上げる
-3. https://client1:9091/ にアクセスする。 **client1** にアクセスしたことが記録されている
+1. `make up` を実行し環境を立ち上げる
+2. https://client1:9091/ にアクセスする。 **client1** にアクセスしたことが記録されている
 
 <img src="./docs/1.png" width=300>
 
-4. https://client2:9092/ にアクセスする。 **client1** にアクセスしたことが **client2** に表示される広告に記録されていることがわかる
+3. https://client2:9092/ にアクセスする。 **client1** にアクセスしたことが **client2** に表示される広告に記録されていることがわかる
 
 <img src="./docs/2.png" width=300>
 
-5. 再び https://client1:9091/ にアクセスする。手順 3 のときと比べて **client2** にアクセスしたことが **client1** に表示される広告に追加で記録されていることがわかる
+4. 再び https://client1:9091/ にアクセスする。手順 3 のときと比べて **client2** にアクセスしたことが **client1** に表示される広告に追加で記録されていることがわかる
 
 <img src="./docs/3.png" width=300>
 

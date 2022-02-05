@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"text/template"
 
 	"github.com/gorilla/mux"
 )
@@ -14,7 +15,7 @@ var trackingData = map[string]map[string]bool{}
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/ad", ad)
+	r.HandleFunc("/ad.js", ad)
 	r.HandleFunc("/me", me)
 
 	http.Handle("/", r)
@@ -54,7 +55,9 @@ func ad(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trackingData[identifier][u.Hostname()] = true
+	if u.Hostname() != "" {
+		trackingData[identifier][u.Hostname()] = true
+	}
 
 	data := trackingData[identifier]
 	adContent := ""
@@ -63,17 +66,11 @@ func ad(w http.ResponseWriter, r *http.Request) {
 		adContent += fmt.Sprintf("<div>%s を閲覧したことがある</div>", site)
 	}
 
-	w.Write([]byte(fmt.Sprintf(`
-const ad = document.getElementById('ad');
-ad.style.display = 'flex';
-ad.style.flexDirection = 'column';
-ad.style.alignItems = 'center';
-ad.style.justifyContent = 'center';
-ad.style.width = 300;
-ad.style.height = 250;
-ad.style.border = 'red solid 1px';
-ad.innerHTML = '%s';
-	`, adContent)))
+	tmpl := template.Must(template.ParseFiles("./ad.tmpl.js"))
+	if err := tmpl.Execute(w, adContent); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func me(w http.ResponseWriter, r *http.Request) {
