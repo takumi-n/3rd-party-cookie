@@ -2,7 +2,7 @@
 
 3rd party Cookie を用いてトラッキングするサンプルです
 
-## 準備
+## セットアップ
 
 - ホスト名 `client1` `client2` `tracker` が 127.0.0.1 に向くように hosts をいじる
 - mkcert 等を利用して以下の鍵を作成する
