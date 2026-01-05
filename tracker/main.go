@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 	"text/template"
 
 	"github.com/gorilla/mux"
@@ -59,11 +60,23 @@ func ad(w http.ResponseWriter, r *http.Request) {
 		trackingData[identifier][u.Hostname()] = true
 	}
 
+	if strings.Contains(u.Path, "camera") {
+		trackingData[identifier]["interest:camera"] = true
+	}
+	if strings.Contains(u.Path, "pc") {
+		trackingData[identifier]["interest:pc"] = true
+	}
+
 	data := trackingData[identifier]
 	adContent := ""
 
-	for site := range data {
-		adContent += fmt.Sprintf("<div>%s を閲覧したことがある</div>", site)
+	for key := range data {
+		if strings.HasPrefix(key, "interest:") {
+			category := strings.TrimPrefix(key, "interest:")
+			adContent += fmt.Sprintf("<div style='background-color: #e0f7fa; padding: 10px; margin: 5px; border: 1px solid #00acc1;'><strong>おすすめ:</strong> 最新の %s をチェック！</div>", category)
+		} else {
+			adContent += fmt.Sprintf("<div>%s を閲覧したことがある</div>", key)
+		}
 	}
 
 	w.Header().Add("Content-Type", "text/javascript")
