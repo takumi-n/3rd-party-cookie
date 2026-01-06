@@ -6,4 +6,4 @@ ad.style.justifyContent = 'center';
 ad.style.width = 300;
 ad.style.height = 250;
 ad.style.border = 'red solid 1px';
-ad.innerHTML = '{{ . }}';
+ad.innerHTML = `{{ . }}`;
